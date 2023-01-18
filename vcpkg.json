@@ -1,0 +1,10 @@
+{
+    "name": "fillmypdf",
+    "version": "1.2.0",
+    "dependencies": [
+        "nlohmann-json",
+        "podofo",
+        "fmt",
+        "winpp"
+    ]
+}

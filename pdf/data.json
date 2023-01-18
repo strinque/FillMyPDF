@@ -1,0 +1,30 @@
+{
+  "text": [
+    {
+      "name": "Given Name Text Box",
+      "value": "Inès Düpond"
+    },
+    {
+      "name": "Family Name Text Box",
+      "value": "Jaouîsê"
+    },
+    {
+      "name": "Address 1 Text Box",
+      "value": "148 park avênue"
+    },
+    {
+      "name": "Postcode Text Box",
+      "value": "56000"
+    },
+    {
+      "name": "City Text Box",
+      "value": "Best City"
+    }
+  ],
+  "checkbox": [
+    {
+      "name": "Driving License Check Box",
+      "value": true
+    }
+  ]
+}
