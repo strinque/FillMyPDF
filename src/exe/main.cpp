@@ -17,7 +17,7 @@ using json = nlohmann::json;
 ==============================================*/
 // program version
 const std::string PROGRAM_NAME = "FillMyPDF";
-const std::string PROGRAM_VERSION = "1.2.0";
+const std::string PROGRAM_VERSION = "1.3.0";
 
 // default length in characters to align status 
 constexpr std::size_t g_status_len = 50;
@@ -33,7 +33,7 @@ auto add_tag = [](const fmt::color color, const std::string& text) {
 // execute a sequence of actions with tags
 void exec(const std::string& str, std::function<void()> fct)
 {
-  fmt::print(fmt::emphasis::bold, "{:<" + std::to_string(g_status_len) + "}", str + ":");
+  fmt::print(fmt::emphasis::bold, "{:<" + std::to_string(g_status_len) + "}", str + ": ");
   try
   {
     fct();
@@ -54,7 +54,7 @@ void parse_json(const std::filesystem::path& filepath,
   // open file
   std::ifstream file(filepath);
   if (!file)
-    throw std::runtime_error(fmt::format("can't read json-data file: {}", filepath.filename().string()));
+    throw std::runtime_error(fmt::format("can't read json-data file: {}", filepath.filename().u8string()));
 
   // parse json file
   json data = json::parse(file);
@@ -93,9 +93,9 @@ int main(int argc, char *argv[])
   {
     // check arguments validity
     if (!std::filesystem::exists(pdf_input))
-      throw std::runtime_error(fmt::format("pdf-input file: \"{}\" doesn't exists", pdf_input.string()));
+      throw std::runtime_error(fmt::format("pdf-input file: \"{}\" doesn't exists", pdf_input.u8string()));
     if (!std::filesystem::exists(json_file))
-      throw std::runtime_error(fmt::format("json-data file: \"{}\" doesn't exists", json_file.string()));
+      throw std::runtime_error(fmt::format("json-data file: \"{}\" doesn't exists", json_file.u8string()));
 
     // start the process
     fmt::print(fmt::fg(fmt::color::light_blue) | fmt::emphasis::bold, "execute the filling process of pdf:\n");
