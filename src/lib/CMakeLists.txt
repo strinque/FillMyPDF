@@ -25,6 +25,7 @@ find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 # force utf-8 encoding for source-files
 add_compile_options($<$<C_COMPILER_ID:MSVC>:/utf-8>)
@@ -59,7 +60,8 @@ target_link_libraries(${TARGET_LIB}
     unofficial::brotli::brotlidec
     OpenSSL::Crypto
     OpenSSL::SSL
-    podofo.lib)
+    podofo.lib
+    nlohmann_json::nlohmann_json)
 
 # install files
 install(TARGETS ${TARGET_LIB} EXPORT ${TARGET_LIB}Config
