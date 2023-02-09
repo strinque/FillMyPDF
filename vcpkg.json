@@ -2,9 +2,9 @@
     "name": "fillmypdf",
     "version": "1.3.0",
     "dependencies": [
-        "nlohmann-json",
-        "podofo",
-        "fmt",
-        "winpp"
+      "nlohmann-json",
+      "podofo",
+      "fmt",
+      "winpp"
     ]
 }
