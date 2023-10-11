@@ -1,8 +1,5 @@
 #include "FillMyPDF.h"
-#pragma warning( push )
-#pragma warning( disable: 4996 )
-  #include <podofo/podofo.h>
-#pragma warning( pop )
+#include <podofo/podofo.h>
 using namespace PoDoFo;
 
 // separate implementation from the interface
@@ -10,8 +7,7 @@ class FillMyPDFImpl final
 {
 public:
   FillMyPDFImpl() :
-    m_pdf(),
-    m_fields()
+    m_pdf()
   {
   }
 
@@ -22,28 +18,20 @@ public:
     if (!std::filesystem::exists(path))
       throw std::exception("file doesn't exists");
 
+    // disable PoDoFo logging system
+    PoDoFo::PdfCommon::SetMaxLoggingSeverity(PoDoFo::PdfLogSeverity::None);
+
     // load pdf document from file
-    PoDoFo::PdfError::EnableDebug(false);
     m_pdf.Load(path.string().c_str());
-    if (!m_pdf.IsLoaded())
-      throw std::exception("can't load the document");
 
     // force the appearance of fields
     m_pdf.GetAcroForm()->SetNeedAppearances(true);
-
-    // extract all fields from document
-    for (int i = 0; i < m_pdf.GetPageCount(); ++i)
-    {
-      PdfPage* pPage = m_pdf.GetPage(i);
-      for (int f = 0; f < pPage->GetNumFields(); ++f)
-        m_fields.push_back(pPage->GetField(f));
-    }
   }
 
   // save pdf into file
   void save(const std::filesystem::path& path)
   {
-    m_pdf.Write(path.string().c_str());
+    m_pdf.Save(path.string().c_str());
   }
 
   // fill pdf with data (text and checkbox)
@@ -51,39 +39,40 @@ public:
             const std::map<std::string, bool>& checkboxes)
   {
     // fill each supported fields
-    for (const auto& f : m_fields)
+    for (int i = 0; i < m_pdf.GetAcroForm()->GetFieldCount(); ++i)
     {
-      switch (f.GetType())
+      PdfField& field = m_pdf.GetAcroForm()->GetFieldAt(i);
+      if (!field.GetName().has_value())
+        continue;
+      const std::string& field_name = field.GetName()->GetString();
+      switch (field.GetType())
       {
-      case ePdfField_TextField:
+      case PdfFieldType::TextBox:
       {
         // check if this field needs to be filled
-        const auto& it = texts.find(f.GetFieldName().GetString());
+        const auto& it = texts.find(field_name);
         if (it != texts.end())
         {
-          // set field text content
-          PdfTextField text(f);
-          text.SetText(it->second);
+          PdfTextBox* textbox = dynamic_cast<PdfTextBox*>(&field);
+          if (!textbox)
+            throw std::runtime_error("can't replace PdfTextBox field: " + field_name);
+          textbox->SetText(PdfString(it->second));
         }
         break;
       }
-      case ePdfField_CheckBox:
+      case PdfFieldType::CheckBox:
       {
         // check if this checkbox has to be filled
-        const auto& it = checkboxes.find(f.GetFieldName().GetString());
+        const auto& it = checkboxes.find(field_name);
         if (it != checkboxes.end())
         {
-          PdfCheckBox checkbox(f);
-          checkbox.SetChecked(it->second);
+          PdfCheckBox* checkbox = dynamic_cast<PdfCheckBox*>(&field);
+          if(!checkbox)
+            throw std::runtime_error("can't replace PdfCheckBox field: " + field_name);
+          checkbox->SetChecked(it->second);
         }
         break;
       }
-      case ePdfField_PushButton:
-      case ePdfField_RadioButton:
-      case ePdfField_ComboBox:
-      case ePdfField_ListBox:
-      case ePdfField_Signature:
-      case ePdfField_Unknown:
       default:
         break;
       }
@@ -91,8 +80,7 @@ public:
   }
 
 private:
-  PoDoFo::PdfMemDocument m_pdf;
-  std::vector<PoDoFo::PdfField> m_fields;
+  PdfMemDocument m_pdf;
 };
 
 // constructor

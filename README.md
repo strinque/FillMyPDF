@@ -157,6 +157,6 @@ Solution Explorer => Project => (executable) => Debug and Launch Settings => src
   "args": [
     "--pdf-input ${projectDir}\\pdf\\forms.pdf",
     "--pdf-output ${projectDir}\\pdf\\output.pdf",
-    "--json ${projectDir}\\pdf\\data.json"
+    "--json-data ${projectDir}\\pdf\\data.json"
   ]
 ```

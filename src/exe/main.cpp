@@ -8,7 +8,6 @@
 #include <nlohmann/json.hpp>
 #include <winpp/console.hpp>
 #include <winpp/parser.hpp>
-#include <winpp/utf8.hpp>
 #include "FillMyPDF.h"
 using json = nlohmann::json;
 
@@ -17,7 +16,7 @@ using json = nlohmann::json;
 ==============================================*/
 // program version
 const std::string PROGRAM_NAME = "FillMyPDF";
-const std::string PROGRAM_VERSION = "1.3.0";
+const std::string PROGRAM_VERSION = "1.4.0";
 
 // default length in characters to align status 
 constexpr std::size_t g_status_len = 50;
@@ -62,7 +61,7 @@ void parse_json(const std::filesystem::path& filepath,
   // read text fields
   const auto& txt_obj = data["text"];
   for (auto& t : txt_obj)
-    texts[t["name"].get<std::string>()] = utf8::from_utf8(t["value"].get<std::string>());
+    texts[t["name"].get<std::string>()] = t["value"].get<std::string>();
 
   // read checkbox fields
   const auto& checkbox_obj = data["checkbox"];
