@@ -32,6 +32,12 @@ find_package(nlohmann_json CONFIG REQUIRED)
 add_compile_options($<$<C_COMPILER_ID:MSVC>:/utf-8>)
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
 
+# set project compile definitions
+target_compile_definitions(${TARGET_LIB}
+  PRIVATE
+    $<$<CONFIG:Debug>:PODOFO_SHARED>
+    $<$<NOT:$<CONFIG:Debug>>:PODOFO_STATIC>)
+
 # generic configuration
 string(CONCAT CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded"
   $<$<CONFIG:Debug>:DebugDLL>
